@@ -141,13 +141,15 @@ def move_files(folder_path, files_dict):
 
     # Симафор
     pool = Semaphore(2)
+    threads = []
     for file_type, files_list in files_dict.items():
         for file in files_list:
-            # move_file(folder_path, file, file_type)
             thread = Thread(target=move_file, args=(
                 pool, folder_path, file, file_type))
             thread.start()
-    thread.join()
+            threads.append(thread)
+    while threads:
+        threads.pop().join()
 
     # Пул потоков
     # with ThreadPoolExecutor(max_workers=2) as pool:
